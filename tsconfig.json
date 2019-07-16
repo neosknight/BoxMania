@@ -5,7 +5,7 @@
         // "outDir": "public/bin/js",
         "outFile": "public/bin/js/app.js", // bundling
     },
-    "files": [
-        "public/src/js/app.ts",
+    "include": [
+        "public/src/**/*"
     ]
 }
