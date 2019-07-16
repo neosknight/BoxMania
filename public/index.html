@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Box Mania</title>
+		<style type="text/css">
+			body{
+		        margin: 0;
+		    }
+
+		    canvas{
+		        display: block;
+		        background: blue;
+		    }
+		</style>
+		<script type="text/javascript" src="bin/js/pixi.js"></script>
+	</head>
+	<body>
+		<canvas id="gameCanvas"></canvas>
+
+        <script type="text/javascript" src="bin/js/app.js"></script>
+
+		<script type="text/javascript">
+			const canvas = document.getElementById('gameCanvas');
+
+            var rows = 5;
+            var cols = 7;
+
+            const app = new PIXI.Application({
+                view: canvas,
+                width: window.innerWidth,
+                height: window.innerHeight
+            });
+
+            console.log(PIXI.utils.TextureCache);
+
+            let loader = PIXI.Loader.shared;
+
+            loader.add("brick", "assets/bricks.png")
+                .add("crate", "assets/crate.png")
+                .on("progress", handleLoadProgress)
+                .on("load", handleLoadAsset)
+                .on("error", handleLoadError)
+                .load(handleLoadComplete);
+
+            let img;
+            let gridContainer;
+            let gridTextures = [];
+            let clockText;
+            let timeElapsedMS = 0;
+            let time = 0;
+            
+
+
+            function handleLoadProgress(loader, resource) {
+                console.log(loader.progress + "% loaded");
+            }
+
+            function handleLoadAsset(loader, resource) {
+                console.log("asset loaded " + resource.name);
+            }
+
+            function handleLoadError() {
+                console.error("load error");
+            }
+
+            function drawClock() {
+                clockText = new PIXI.Text('Time: 0',{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'right'});
+
+                clockText.x = gridContainer.width - clockText.width;
+                clockText.y = 0;
+
+                gridContainer.addChild(clockText);
+            }
+
+            function updateClockText(time) {
+                clockText.text = "Time: " + time;
+            }
+
+            function drawGrid(rows, cols) {
+                gridContainer = new PIXI.Container();
+
+                let topLeftX = 150;
+                let topLeftY = 150;
+
+                let brickSpriteWidth = 64;
+                let brickSpriteHeight = 64;
+
+                let brickSpriteScaleX = brickSpriteWidth / 512;
+                let brickSpriteScaleY = brickSpriteHeight / 512;
+
+                for(var i = 0; i < rows; i++) {
+                    for(var j = 0; j < cols; j++) {
+                        let brickTexture = loader.resources.brick.texture;
+                        brickSprite = new PIXI.Sprite(brickTexture);
+                        brickSprite.x = (j-1) * brickSpriteWidth;
+                        brickSprite.y = (i-1) * brickSpriteHeight;
+                        brickSprite.anchor.x = 0.5;
+                        brickSprite.anchor.y = 0.5;
+                        brickSprite.scale.set(brickSpriteScaleX, brickSpriteScaleY);
+
+                        gridContainer.addChild(brickSprite);
+                        gridTextures.push(brickSprite);
+                    }
+                }
+
+                // gridContainer.pivot.x = gridContainer.width/2;
+                // gridContainer.pivot.y = gridContainer.height/2;
+                gridContainer.x = topLeftX;
+                gridContainer.y = topLeftY;
+                // gridContainer.width = brickSpriteWidth * cols;
+                // gridContainer.height = brickSpriteHeight * rows;
+                // gridContainer.y = app.screen.height/2;
+
+                app.stage.addChild(gridContainer);
+            }
+
+            function drawCrates() {
+                let positions = [
+                    { x: 0, y: 2 },
+                    { x: 0, y: 4 },
+                    { x: 3, y: 3 },
+                ];
+
+                let crateSpriteWidth = 64;
+                let crateSpriteHeight = 64;
+
+                let crateSpriteScaleX = crateSpriteWidth / 512;
+                let crateSpriteScaleY = crateSpriteHeight / 512;
+
+                positions.forEach((position) => {
+                    let crateTexture = loader.resources.crate.texture;
+                    crateSprite = new PIXI.Sprite(crateTexture);
+                    crateSprite.x = (position.x-1) * crateSpriteWidth;
+                    crateSprite.y = (position.y-1) * crateSpriteHeight;
+                    crateSprite.anchor.x = 0.5;
+                    crateSprite.anchor.y = 0.5;
+                    crateSprite.scale.set(crateSpriteScaleX, crateSpriteScaleY);
+
+                    gridContainer.addChild(crateSprite);
+                });
+            }
+
+            function handleLoadComplete() {
+                drawGrid(rows, cols);
+                drawCrates();
+                drawClock();
+
+                app.ticker.add(animate);
+
+                // setTimeout(() => {
+                //     img.texture = loader.resources.bg.texture;
+                // }, 2000);
+            }
+
+            function animate() {
+                timeElapsedMS += app.ticker.elapsedMS;
+                if(timeElapsedMS >= 1000) {
+                    timeElapsedMS = 0;
+                    time++;
+
+                    updateClockText(time);
+                }
+                // img.x = app.renderer.screen.width / 2;
+                // img.y = app.renderer.screen.height / 2;
+                // gridContainer.rotation = 0.2;
+            }
+		</script>
+	</body>
+</html>
