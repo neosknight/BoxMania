@@ -12,12 +12,20 @@
 		        background: blue;
 		    }
 		</style>
-		<script type="text/javascript" src="bin/js/pixi.js"></script>
+        <script type="text/javascript" src="bin/js/pixi.js"></script>
+        <!-- Those two lines below are crucial for SystemJS working -->
+        <script src="systemjs/dist/system.js"></script>
+        <script src="https://raw.githack.com/systemjs/systemjs/master/src/extras/named-register.js"></script>
 	</head>
 	<body>
-		<canvas id="gameCanvas"></canvas>
-
-        <script type="text/javascript" src="bin/js/app.js"></script>
+        <canvas id="gameCanvas"></canvas>
+        
+        <script>
+            // This loads the transpiled JS and primary registered component
+            System.import('/bin/js/app.js').then(function(){
+                System.import("app");
+            });
+        </script>
 
 		<script type="text/javascript">
 			const canvas = document.getElementById('gameCanvas');

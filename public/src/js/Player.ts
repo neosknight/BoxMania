@@ -21,7 +21,7 @@ export default class Player extends NotifiableComponent {
     move(offsetX: number, offsetY: number) {
         this.x += offsetX;
         this.y += offsetY;
-        this.eventBus.notify("player-moved", { x: this.x, y: this.y });
+        this.raiseEvent("player-moved", { x: this.x, y: this.y });
         this.updatePlayerPosition();
     }
 }

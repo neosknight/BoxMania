@@ -137,7 +137,7 @@ System.register("Player", ["NotifiableComponent"], function (exports_5, context_
                 Player.prototype.move = function (offsetX, offsetY) {
                     this.x += offsetX;
                     this.y += offsetY;
-                    this.eventBus.notify("player-moved", { x: this.x, y: this.y });
+                    this.raiseEvent("player-moved", { x: this.x, y: this.y });
                     this.updatePlayerPosition();
                 };
                 return Player;
